@@ -204,6 +204,7 @@ function PatientPanel() {
             </Row>
             <Row className="d-grid gap-2">
                 <Col>
+                    <br />
                     <Button type="button" variant="secondary" onClick={savePatientHandler}>Save patient</Button>       
                 </Col>
                 <Col/>
@@ -227,8 +228,7 @@ function PatientPanel() {
             </Row>
            
             <Row className="d-grid gap-2">
-                <h3>List of Patients</h3>
-
+                <br />
                 <Table striped bordered hover>
                     <thead>
                         <tr>
@@ -250,7 +250,6 @@ function PatientPanel() {
                 </Col>
             </Row>
 
-            <h3>Show treatments</h3>
             <h3>Treatment Panel</h3>
             <Row className="d-grid gap-2">
                 <Col >
@@ -260,7 +259,7 @@ function PatientPanel() {
             </Row>
             <Row className="d-grid gap-2">
                 <Col>
-                Allergy 
+                <span style={{marginRight: 5}}>Allergy </span>
                 <BootstrapSwitchButton
                     checked={isAllergy === 'true' ? true : false}
                     onlabel='Yes'
@@ -268,12 +267,12 @@ function PatientPanel() {
                     onChange={(checked) => {
                         setIsAllergy(checked ? 'true': 'false')
                     }}
-/>
+                />
                 </Col>
             </Row>
-            <Row className="d-grid gap-2">
+            <Row className="d-grid gap-2" style={{marginTop: 5}}>
                 <Col>
-                    Treatment category  
+                    <span style={{marginRight: 5}}>Treatment category </span>
                     <BootstrapSwitchButton
                         checked={treatmentCategory === '1' ? true : false}
                         onlabel='1'
@@ -284,7 +283,7 @@ function PatientPanel() {
                     />
                 </Col>
             </Row>
-            <Row className="d-grid gap-2">
+            <Row className="d-grid gap-2" style={{marginTop: 10}}>
                 <Col>
                     <Button type="button" variant="secondary" onClick={saveTreatmentHandler}>Save treatment</Button>       
                 </Col>
@@ -308,12 +307,9 @@ function PatientPanel() {
                 </Col>
             </Row>
            
-            <Row className="d-grid gap-2">
-                <Col>
-                    <h3>List of treatments</h3>
-                </Col>
-                <Col>
-                    Treatment category  
+            <Row className="d-grid gap-2" style={{marginBottom: 10}}>
+                <Col style={{marginLeft: '80%'}}>
+                    <span style={{marginRight: 5}}>Filter on category </span>
                     <BootstrapSwitchButton
                         checked={filteredTreatmentCategory === '1' ? true : false}
                         onlabel='1'
