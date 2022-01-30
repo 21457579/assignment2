@@ -244,7 +244,11 @@ function PatientPanel() {
                 </Table>
             </Row>
 
-
+            <Row>
+                <Col>
+                    <hr></hr>
+                </Col>
+            </Row>
 
             <h3>Show treatments</h3>
             <h3>Treatment Panel</h3>
