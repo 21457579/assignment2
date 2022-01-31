@@ -332,7 +332,7 @@ app.post("/prescription/", (req, res, next) => {
     var data = {
         id: crypto.randomUUID(),
         prescriptionName: req.body.prescriptionName,
-        treatmentName: req.body.treatmentName
+        treatmentId: req.body.treatmentId
         
     }
     var sql ='INSERT INTO prescription (id, prescriptionName, treatmentId) VALUES (?,?,?)'
@@ -357,20 +357,20 @@ app.put("/updatePrescription/:id", (req, res, next) => {
     console.log("UPDATE Prescription:" + req.params.id);
     var data = {
         prescriptionName: req.body.prescriptionName,
-        treatmentName: req.body.treatmentName,
+        treatmentId: req.body.treatmentId,
     }
     console.log("id:" + req.body.id);
     console.log("patientId:" + req.body.prescriptionName);
-    console.log("treatmentName:" + req.body.treatmentName);
+    console.log("treatmentId:" + req.body.treatmentId);
 
     console.log("UPDATE Prescription: data.id = " + data.id);
     db.run(
         `UPDATE prescription set 
            id = COALESCE(?,id), 
            prescriptionName = COALESCE(?,patientId), 
-           treatmentName = COALESCE(?,treatmentName)
+           treatmentId = COALESCE(?,treatmentId)
             WHERE id = ?`,
-        [req.params.id, data.prescriptionName, data.treatmentName],
+        [req.params.id, data.prescriptionName, data.treatmentId],
         function (err, result) {
             if (err){
                 res.status(400).json({"error": res.message})
