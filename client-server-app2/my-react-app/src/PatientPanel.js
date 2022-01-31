@@ -139,6 +139,11 @@ function PatientPanel() {
         return treatments.some(f => f.patientId === id && f.isAllergy === 'true');
     }
 
+    function treatmentHasPrescriptions(id){
+        if (prescriptions.length === 0) return
+        return prescriptions.some(f => f.treatmentId === id);
+    }
+
     // Get the treatment records from the database
     function fetchTreatmentRecords(id){
         axios.get('http://localhost:8080/treatments')
@@ -230,10 +235,9 @@ function PatientPanel() {
     }
 
     // 
-    function setPrescriptionState(id,  prescriptionName, treatmentName){
+    function setPrescriptionState(id,  prescriptionName){
         setId(id);
-        setPatientName(prescriptionName);
-        setTreatmentName(treatmentName);
+        setPrescriptionName(prescriptionName);
     }
 
     // Get prescription records from database
@@ -287,7 +291,6 @@ function PatientPanel() {
     function clearPrescriptions() {
         setId(id);
         setPrescriptionName('');
-        setTreatmentName('');
     }
 
     // Display prescriptions
@@ -465,7 +468,8 @@ function PatientPanel() {
                     </thead>
                     <tbody>
                         <TreatmentList treatments = {filteredTreatments} 
-                        setTreatmentState={setTreatmentState} />
+                        setTreatmentState={setTreatmentState}
+                        treatmentHasPrescriptions={treatmentHasPrescriptions}/>
                     </tbody>
                 </Table>
             </Row>

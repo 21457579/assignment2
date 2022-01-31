@@ -4,11 +4,18 @@ import React from 'react';
 
 // Props are used to send data from one component to another. 
 function Treatment (props) { 
+    let style = {}
+
+    if (props.item.id && props.treatmentHasPrescriptions(props.item.id)) {
+        style = {
+            color: 'blue'    
+        };
+    }
     return (
         <tr key={props.item.treatmentName} onClick={() => props.setTreatmentState(props.item.id, props.item.treatmentName, props.item.isAllergy, props.item.treatmentCategory)}>
-            <td>{props.item.treatmentName}</td> 
-            <td>{props.item.isAllergy}</td>
-            <td>{props.item.treatmentCategory}</td>
+            <td style={style}>{props.item.treatmentName}</td> 
+            <td style={style}>{props.item.isAllergy}</td>
+            <td style={style}>{props.item.treatmentCategory}</td>
         </tr>
     );
 }
