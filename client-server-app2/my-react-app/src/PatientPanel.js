@@ -33,8 +33,6 @@ function PatientPanel() {
     // To tell the function what to do after render.
     useEffect(()=>{
         fetchPatientRecords();
-        fetchTreatmentRecords();
-        fetchPrescriptionRecords();
       },[])
 
     // Use set to re-render the components when the state changes.
@@ -53,6 +51,9 @@ function PatientPanel() {
         .then( (response) => {
             var resData = response.data;
             setPatients(resData.data);
+            if (!resData.data || resData.data.length === 0) return;
+            setPatientState(resData.data[0].id, resData.data[0].name, resData.data[0].surname, resData.data[0].gender);
+            fetchTreatmentRecords(resData.data[0].id);
         });
     }
 
@@ -124,22 +125,30 @@ function PatientPanel() {
     }
 
     // 
-    function setTreatmentState(id, treatmentName, idAllergy, treatmentCategory){
+    function setTreatmentState(id, treatmentName, isAllergy, treatmentCategory){
         setTreatmentId(id);
-        setIsAllergy(idAllergy);
+        setIsAllergy(isAllergy);
         setTreatmentName(treatmentName);
         setTreatmentCategory(treatmentCategory);
 
         filterPrescriptions(prescriptions, id);
     }
 
+    function patientHasAllergies(id){
+        if (treatments.length === 0) return
+        return treatments.some(f => f.patientId === id && f.isAllergy === 'true');
+    }
+
     // Get the treatment records from the database
-    function fetchTreatmentRecords(){
+    function fetchTreatmentRecords(id){
         axios.get('http://localhost:8080/treatments')
         .then( (response) => {
             var resData = response.data;
             setTreatments(resData.data);
             filterTreatments(filteredTreatmentCategory, resData.data, id)
+            if (!resData.data || resData.data.length === 0) return;
+            setTreatmentState(resData.data[0].id, resData.data[0].treatmentName, resData.data[0].isAllergy, resData.data[0].treatmentCategory )
+            fetchPrescriptionRecords(resData.data[0].id);    
         });
     }
 
@@ -155,7 +164,7 @@ function PatientPanel() {
 
         axios.post('http://localhost:8080/treatment', value)
         .then( (response) => {
-            fetchTreatmentRecords();
+            fetchTreatmentRecords(id);
             setTreatmentId(response.data.data.treatmentId)
         });
     }
@@ -164,7 +173,7 @@ function PatientPanel() {
     function deleteTreatment(){
         axios.delete(`http://localhost:8080/deleteTreatment/${treatmentId}`)
         .then( (response) => {
-            fetchTreatmentRecords()
+            fetchTreatmentRecords(id)
         });
     }
     
@@ -179,13 +188,13 @@ function PatientPanel() {
         };
         axios.put(`http://localhost:8080/updateTreatment/${treatmentId}`, value)
         .then( (response) => {
-            fetchTreatmentRecords()
+            fetchTreatmentRecords(id)
         });
     }
 
     // Display treatment records
     function displayTreatmentHandler(){
-        fetchTreatmentRecords();
+        fetchTreatmentRecords(id);
     }
 
     // Save treatment information
@@ -228,7 +237,7 @@ function PatientPanel() {
     }
 
     // Get prescription records from database
-    function fetchPrescriptionRecords(){
+    function fetchPrescriptionRecords(treatmentId){
         axios.get('http://localhost:8080/prescriptions')
         .then( (response) => {
             var resData = response.data;
@@ -247,7 +256,7 @@ function PatientPanel() {
 
         axios.post('http://localhost:8080/prescription', value)
         .then( (response) => {
-            fetchPrescriptionRecords();
+            fetchPrescriptionRecords(treatmentId);
             setId(response.data.data.id)
         });
     }
@@ -256,7 +265,7 @@ function PatientPanel() {
     function deletePrescription(){
         axios.delete(`http://localhost:8080/deletePrescription/${id}`)
         .then( (response) => {
-            fetchPrescriptionRecords()
+            fetchPrescriptionRecords(treatmentId)
             clearPrescriptions();
         });
     }
@@ -270,7 +279,7 @@ function PatientPanel() {
         };
         axios.put(`http://localhost:8080/updatePrescription/${id}`, value)
         .then( (response) => {
-            fetchPrescriptionRecords()
+            fetchPrescriptionRecords(treatmentId)
         });
     }
 
@@ -283,7 +292,7 @@ function PatientPanel() {
 
     // Display prescriptions
     function displayPrescriptionHandler(){
-        fetchPrescriptionRecords();
+        fetchPrescriptionRecords(treatmentId);
     }
 
     // Save prescriptions
@@ -363,7 +372,8 @@ function PatientPanel() {
                     </thead>
                     <tbody>
                         <PatientList patients = {patients} 
-                        setPatientState={setPatientState} />
+                        setPatientState={setPatientState} 
+                        patientHasAllergies={patientHasAllergies}/>
                     </tbody>
                 </Table>
             </Row>
