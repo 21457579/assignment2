@@ -1,10 +1,13 @@
+// import these components to be able to use them.
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import PatientList from './PatientList.js';
 import TreatmentList from './TreatmentList.js';
+import PrescriptionList from './PrescriptionList.js';
 import { Button, Table, Container, Row, Col } from 'react-bootstrap';
 import BootstrapSwitchButton from 'bootstrap-switch-button-react'
 
+// Create a function containing Hooks State.
 function PatientPanel() {
 
     const [id, setId] = React.useState('');
@@ -22,18 +25,27 @@ function PatientPanel() {
     const [filteredTreatmentCategory, setFilteredTreatmentCategory] = React.useState('1');
     const [filteredTreatments, setFilteredTreatments] = React.useState([]);
 
+    const [prescriptions, setPrescriptions] = React.useState([]);
+    const [prescriptionName, setPrescriptionName] = React.useState([]);
+
+    // To tell the function what to do after render.
     useEffect(()=>{
         fetchPatientRecords();
         fetchTreatmentRecords();
+        fetchPrescriptionRecords();
       },[])
 
+    // Use set to re-render the components when the state changes.
     function setPatientState(id, patientName, patientSurname, gender){
         setId(id);
         setPatientName(patientName);
         setPatientSurname(patientSurname);
         setGender(gender);
+
+        filterTreatments(filteredTreatmentCategory, treatments, id)
     }
 
+    // Get the patient records data
     function fetchPatientRecords(){
         axios.get('http://localhost:8080/patients')
         .then( (response) => {
@@ -42,6 +54,7 @@ function PatientPanel() {
         });
     }
 
+    // Save the patient information
     function savePatient(){
         const value = {
             id: id,
@@ -57,6 +70,7 @@ function PatientPanel() {
         });
     }
 
+    // Delete patient information
     function deletePatient(){
         axios.delete(`http://localhost:8080/deletePatient/${id}`)
         .then( (response) => {
@@ -65,6 +79,7 @@ function PatientPanel() {
         });
     }
     
+    // Update patient information
     function updatePatient(){
         const value = {
             id: id,
@@ -78,6 +93,7 @@ function PatientPanel() {
         });
     }
 
+    // Clear the input bars
     function clearPatients() {
         setId(id);
         setPatientName('');
@@ -85,22 +101,27 @@ function PatientPanel() {
         setGender('');
     }
 
+    // Display patient information
     function displayPatientHandler(){
         fetchPatientRecords();
     }
 
+    // save patient information
     function savePatientHandler(){
         savePatient();
     }
 
+    // delete patient information
     function deletePatientHandler(){
         deletePatient();
     }
 
+    // update patient information
     function updatePatientHandler(){
         updatePatient();
     }
 
+    // 
     function setTreatmentState(id, treatmentName, idAllergy, treatmentCategory){
         setTreatmentId(id);
         setIsAllergy(idAllergy);
@@ -108,15 +129,17 @@ function PatientPanel() {
         setTreatmentCategory(treatmentCategory);
     }
 
+    // Get the treatment records from the database
     function fetchTreatmentRecords(){
         axios.get('http://localhost:8080/treatments')
         .then( (response) => {
             var resData = response.data;
             setTreatments(resData.data);
-            filterTreatments(filteredTreatmentCategory, resData.data)
+            filterTreatments(filteredTreatmentCategory, resData.data, id)
         });
     }
 
+    // Save the treatment information
     function saveTreatment(){
         const value = {
             id: treatmentId,
@@ -133,6 +156,7 @@ function PatientPanel() {
         });
     }
 
+    // delete treatment information.
     function deleteTreatment(){
         axios.delete(`http://localhost:8080/deleteTreatment/${treatmentId}`)
         .then( (response) => {
@@ -140,6 +164,7 @@ function PatientPanel() {
         });
     }
     
+    // Update treatment information
     function updateTreatment(){
         const value = {
             id: treatmentId,
@@ -154,35 +179,124 @@ function PatientPanel() {
         });
     }
 
+    // Display treatment records
     function displayTreatmentHandler(){
         fetchTreatmentRecords();
     }
 
+    // Save treatment information
     function saveTreatmentHandler(){
         saveTreatment();
     }
 
+    // Delete treatment information
     function deleteTreatmentHandler(){
         deleteTreatment();
     }
 
+    // Update treatment information
     function updateTreatmentHandler(){
         updateTreatment();
     }
     
+    // Clear input bars
     function clearTreatments() {
+        setId('')
         setTreatmentId('');
         setIsAllergy('');
         setTreatmentName('');
         setTreatmentCategory('');
     }
 
-    function filterTreatments(isChecked, allTreatments) {
+    // Filter treatments after treatment category
+    function filterTreatments(isChecked, allTreatments, id) {
         setFilteredTreatmentCategory(isChecked)
-        setFilteredTreatments(allTreatments.filter(f => f.treatmentCategory === isChecked))
+        setFilteredTreatments(allTreatments.filter(f => 
+            f.treatmentCategory === isChecked
+            && f.patientId === id))
+    }
+
+    // 
+    function setPrescriptionState(id,  prescriptionName, treatmentName){
+        setId(id);
+        setPatientName(prescriptionName);
+        setTreatmentName(treatmentName);
+    }
+
+    // Get prescription records from database
+    function fetchPrescriptionRecords(){
+        axios.get('http://localhost:8080/prescriptions')
+        .then( (response) => {
+            var resData = response.data;
+            setPrescriptions(resData.data);
+        });
+    }
+
+    // Save prescriptions
+    function savePrescription(){
+        const value = {
+            id: id,
+            prescriptionName: prescriptionName
+        };
+
+        axios.post('http://localhost:8080/prescription', value)
+        .then( (response) => {
+            fetchPrescriptionRecords();
+            setId(response.data.data.id)
+        });
+    }
+
+    // Delete prescription
+    function deletePrescription(){
+        axios.delete(`http://localhost:8080/deletePrescription/${id}`)
+        .then( (response) => {
+            fetchPrescriptionRecords()
+            clearPrescriptions();
+        });
+    }
+    
+    // Update prescription
+    function updatePrescription(){
+        const value = {
+            id: id,
+            prescriptionName: prescriptionName,
+            treatmentName: treatmentName
+        };
+        axios.put(`http://localhost:8080/updatePrescription/${id}`, value)
+        .then( (response) => {
+            fetchPrescriptionRecords()
+        });
+    }
+
+    // Clear input bars
+    function clearPrescriptions() {
+        setId(id);
+        setPrescriptionName('');
+        setTreatmentName('');
+    }
+
+    // Display prescriptions
+    function displayPrescriptionHandler(){
+        fetchPrescriptionRecords();
+    }
+
+    // Save prescriptions
+    function savePrescriptionHandler(){
+        savePrescription();
+    }
+
+    // Delete prescriptions
+    function deletePrescriptionHandler(){
+        deletePrescription();
+    }
+
+    // Update prescriptions
+    function updatePrescriptionHandler(){
+        updatePrescription();
     }
 
 
+    // What is shown in the app
     return (
         <Container>
             <h3>Patient Panel</h3>
@@ -315,7 +429,7 @@ function PatientPanel() {
                         onlabel='1'
                         offlabel='2'
                         onChange={(checked) => {
-                            filterTreatments(checked ? '1': '2', treatments)
+                            filterTreatments(checked ? '1': '2', treatments, id)
                         }}
                     />
                 </Col>
@@ -337,6 +451,54 @@ function PatientPanel() {
             </Row>
             <Row className="d-grid gap-2">
             </Row>
+
+            <Row>
+                <Col>
+                    <hr></hr>
+                </Col>
+            </Row>
+
+            <h3>Prescription Panel</h3>
+            <Row className="d-grid gap-2">
+                <Col >
+                    <input type="text" placeholder='Prescription Name' value ={prescriptionName} onChange ={e => setPrescriptionName(e.target.value) }/>
+                </Col>
+                <Col/>
+            </Row>
+
+            <Row className="d-grid gap-2" style={{marginTop: 10}}>
+                <Col>
+                    <Button type="button" variant="secondary" onClick={savePrescriptionHandler}>Save prescription</Button>       
+                </Col>
+                <Col/>
+            </Row>
+            <Row className="d-grid gap-2">
+                <Col>
+                    <Button type="button" variant="secondary" onClick={updatePrescriptionHandler}>Update prescription</Button>   
+                </Col>
+                <Col/>
+            </Row>
+            <Row className="d-grid gap-2">
+                <Col>
+                    <Button type="button" variant="secondary" onClick={deletePrescriptionHandler}>Delete prescription</Button>   
+                </Col>
+                <Col/>
+            </Row>
+
+            <Row>
+                <Table striped bordered hover>
+                    <thead>
+                        <tr>
+                        <th>Prescription Name</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    <PrescriptionList prescriptions = {prescriptions} 
+                        setPrescriptionState={setPrescriptionState} />
+                    </tbody>
+                </Table>
+            </Row>
+
         </Container>
     );
 

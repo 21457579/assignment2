@@ -35,5 +35,15 @@ let db = new sqlite3.Database('mypatients.db', (err) => {
     }
   });
 
+  const sqlPrescription='CREATE TABLE prescription(id text, prescriptionName text, treatmentId text)';
+  db.run(sqlPrescription, (err) => {
+    if (err) {
+        // Table already created 
+        console.log('Prescription table already created.');
+    }else{
+      console.log('Prescription table created.');
+    }
+  });
+
 // export as module, called db
 module.exports = db
