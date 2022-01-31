@@ -28,6 +28,8 @@ function PatientPanel() {
     const [prescriptions, setPrescriptions] = React.useState([]);
     const [prescriptionName, setPrescriptionName] = React.useState([]);
 
+    const [filteredPrescriptions, setFilteredPrescriptions] = React.useState([]);
+
     // To tell the function what to do after render.
     useEffect(()=>{
         fetchPatientRecords();
@@ -127,6 +129,8 @@ function PatientPanel() {
         setIsAllergy(idAllergy);
         setTreatmentName(treatmentName);
         setTreatmentCategory(treatmentCategory);
+
+        filterPrescriptions(prescriptions, id);
     }
 
     // Get the treatment records from the database
@@ -229,6 +233,7 @@ function PatientPanel() {
         .then( (response) => {
             var resData = response.data;
             setPrescriptions(resData.data);
+            filterPrescriptions(resData.data, treatmentId)
         });
     }
 
@@ -236,7 +241,8 @@ function PatientPanel() {
     function savePrescription(){
         const value = {
             id: id,
-            prescriptionName: prescriptionName
+            prescriptionName: prescriptionName,
+            treatmentId: treatmentId
         };
 
         axios.post('http://localhost:8080/prescription', value)
@@ -295,6 +301,10 @@ function PatientPanel() {
         updatePrescription();
     }
 
+    function filterPrescriptions(allPrescriptions, id) {
+        setFilteredPrescriptions(allPrescriptions.filter(f => 
+            f.treatmentId === id))
+    }
 
     // What is shown in the app
     return (
@@ -493,7 +503,7 @@ function PatientPanel() {
                         </tr>
                     </thead>
                     <tbody>
-                    <PrescriptionList prescriptions = {prescriptions} 
+                    <PrescriptionList prescriptions = {filteredPrescriptions} 
                         setPrescriptionState={setPrescriptionState} />
                     </tbody>
                 </Table>
