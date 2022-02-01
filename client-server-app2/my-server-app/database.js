@@ -11,6 +11,7 @@ let db = new sqlite3.Database('mypatients.db', (err) => {
 
   // db.run("DROP TABLE patient");
   // db.run("DROP TABLE treatment");
+  // db.run("DROP TABLE prescription");
   // console.log("Tables dropped")
 
 
