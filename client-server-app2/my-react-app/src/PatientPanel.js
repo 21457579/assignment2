@@ -321,12 +321,13 @@ function PatientPanel() {
     // What is shown in the app
     return (
         <Container>
-            <h3>Patient Panel</h3>
+            <h1>LHM: Patient System</h1>
+            <h3>Patients</h3>
+            <h6>Add, update or delete patients</h6>
             <Row className="d-grid gap-2">
                 <Col >
                     <input type="text" placeholder='Patient Name' value ={patientName} onChange ={e => setPatientName(e.target.value) }/>
                 </Col>
-                <Col/>
             </Row>
             <Row className="d-grid gap-2">
                 <Col>
@@ -387,7 +388,8 @@ function PatientPanel() {
                 </Col>
             </Row>
 
-            <h3>Treatment Panel</h3>
+            <h3>Treatments</h3>
+            <h6>Add treatments to the patients</h6>
             <Row className="d-grid gap-2">
                 <Col >
                     <input type="text" placeholder='Treatment Name' value ={treatmentName} onChange ={e => setTreatmentName(e.target.value) }/>
@@ -482,7 +484,8 @@ function PatientPanel() {
                 </Col>
             </Row>
 
-            <h3>Prescription Panel</h3>
+            <h3>Prescriptions</h3>
+            <h6>Add prescriptions to the chosen treatment</h6>
             <Row className="d-grid gap-2">
                 <Col >
                     <input type="text" placeholder='Prescription Name' value ={prescriptionName} onChange ={e => setPrescriptionName(e.target.value) }/>

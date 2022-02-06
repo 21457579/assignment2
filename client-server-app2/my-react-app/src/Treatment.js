@@ -8,7 +8,7 @@ function Treatment (props) {
 
     if (props.item.id && props.treatmentHasPrescriptions(props.item.id)) {
         style = {
-            color: 'blue'    
+            color: 'green'    
         };
     }
     return (
